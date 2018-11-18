@@ -72,7 +72,7 @@
               <a  link>
                 <cite>{{tmp.upuser}}</cite>
                 <!--<i class="iconfont icon-renzheng" title="认证信息：XXX"></i>-->
-                <i class="layui-badge fly-badge-vip">VIP3</i>
+                <i class="layui-badge fly-badge-vip">{{tmp.vip}}</i>
               </a>
               <span>{{tmp.data}}</span>
               
@@ -255,6 +255,7 @@ export default {
   },
   created() {
     this.getlist()
+
   },
   methods:{
      getlist(){

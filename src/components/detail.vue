@@ -25,8 +25,9 @@
             <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span> -->
           </div>
           <span class="fly-list-nums"> 
-            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> {{list[0].comment}}</a>
-            <i class="iconfont" title="人气">&#xe60b;</i> <!--{{list[0].browse}}-->
+            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> {{list.comment}}</a>
+            <a href="#comment"><i class="iconfont" title="回答">&#xe60b;</i> {{list.browse}}</a>
+           
           </span>
         </div>
         <div class="detail-about">
@@ -35,26 +36,24 @@
           </a>
           <div class="fly-detail-user">
             <a  class="fly-link">
-              <cite>{{list[0].upuser}}</cite>
+              <cite>{{list.upuser}}</cite>
             
               <i class="layui-badge fly-badge-vip">VIP3</i>
             </a>
-            <span>{{list[0].data}}</span>
+            <span>{{list.data}}</span>
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
-            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a >编辑此贴</a></span>
+            <span class="layui-btn layui-btn-xs jie-admin" @click="openText"  type="edit"><a >编辑此贴</a></span>
           </div>
         </div>
         <div class="detail-body photos">
-          <p>
-          
-          </p>
-          <p>更新日志：</p>
-<pre>
-# {{list[0].content}}
-</pre>
-          
-         
+        <eild-are v-show="show" v-model="list.content">
+        </eild-are>
+              <div v-show="show"  class="layui-form-item">
+                <button style="margin-left:300px;margin-top:8px;" class="layui-btn" @click="getRef" lay-filter="*" lay-submit>立即发布</button>
+              </div>
+
+         <div  v-show="!show" ref="content"></div>            
         </div>
       </div>
 
@@ -63,8 +62,8 @@
           <legend>评论</legend>
         </fieldset>
 
-        <ul class="jieda" id="jieda">
-          <li data-id="111" class="jieda-daan">
+        <ul  class="jieda" id="jieda">
+          <li  v-for="tmp in pinLun"  :key="tmp.cid"  data-id="111" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
               <a class="fly-avatar" href="">
@@ -72,12 +71,12 @@
               </a>
               <div class="fly-detail-user">
                 <a href="" class="fly-link">
-                  <cite>贤心</cite>
-                  <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
-                  <i class="layui-badge fly-badge-vip">VIP3</i>              
+                  <cite v-text="tmp.username"></cite>
+                  <i class="iconfont icon-renzheng"></i>
+                  <i class="layui-badge fly-badge-vip">{{tmp.vip}}</i>              
                 </a>
                 
-                <span>(楼主)</span>
+                <span></span>
                 <!--
                 <span style="color:#5FB878">(管理员)</span>
                 <span style="color:#FF9E3F">（社区之光）</span>
@@ -86,35 +85,41 @@
               </div>
 
               <div class="detail-hits">
-                <span>2017-11-30</span>
+                <span>{{tmp.date}}</span>
               </div>
 
-              <i class="iconfont icon-caina" title="最佳答案"></i>
+ 
             </div>
             <div class="detail-body jieda-body photos">
-              <p>香菇那个蓝瘦，这是一条被采纳的回帖</p>
+              <p>{{tmp.content}}</p>
             </div>
       
           </li>
           
+        <div v-show="pageShow"  style="text-align: center">
+          <div class="laypage-main">
+          <span @click="getlist(i-1,5)" v-for="i in page" class="laypage-next">{{i}}</span>
+        
+          <a   @click="getlist(idex+1,5)"  class="laypage-next">下一页</a></div>
+          </div>
       
           <!-- 无数据时 -->
           <!-- <li class="fly-none">消灭零回复</li> -->
         </ul>
         
         <div class="layui-form layui-form-pane">
-          <form  method="post">
+        
             <div class="layui-form-item layui-form-text">
               <a name="comment"></a>
               <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+                <textarea v-model="coment.content"  id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
-              <input type="hidden" name="jid" value="123">
-              <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
+              <input  type="hidden" name="jid"  >
+              <button class="layui-btn"  @click="comments" >提交回复</button>
             </div>
-          </form>
+       
         </div>
       </div>
      </div>
@@ -155,38 +160,128 @@
 
 </template>
 <script>
-import {getdetail,deleteWz} from '@/axios/index'
+import {getdetail,addcomment,deleteWz,updata} from '@/axios/index'
+import eild from '@/components/eild'
  export default{
     name:"Detail",
-    mounted() {
+    beforeMount() {
       
+    },
+    mounted() {
+          
+    },
+    components:{
+      'eild-are':eild
     },
     data(){
       return {
-        list:'werwer'
+        list:'werwer',
+        imgSrc:[],
+        datt:'',
+        show:false,
+        coment:{},
+        pinLun:null,
+        pageShow:false,
+        page:null,
+        idex:null
+       
        
       }
     },
     created() {
        this.getlist()
+   
     },
     methods:{
+        nextPage(){
+
+        },
+        comments(){
+          const id=this.$route.params.id
+          this.coment.uid=1
+          this.coment.id=id
+          if(id==null) {
+            alert("请先登录，再BB");
+            
+          }
+           addcomment(this.coment).then((res)=>{
+              res.data.code==200 ?  alert("评论成功"):alert("评论失败")
+              this.getlist()
+              this.coment.content=''
+           })
+        },
         delwz(){
+        //  console.log(this.$message)
+       //   this.$message({
+       //   showClose: true,
+        //  message: '恭喜你，这是一条成功消息',
+       //   type: 'success'
+       // });
+      //  console.log(1)
+      //  return
+          const uname=sessionStorage.getItem('username')
+          if(uname==null) {
+            alert('没有权限')
+            return
+            }
           const id=this.$route.params.id
           deleteWz(id).then((res)=>{
-            console.log(res.data)
-             this.getlist()
+            this.getlist()
             if(res.data.code!=200) return;
-                  
+            this.$router.push('/')
+            
           })
         },
-        getlist(){
+        getlist(page=0,limit=5){
          const id=this.$route.params.id
            getdetail(id).then((res)=>{
-              this.list=res.data
-              this.list[0].browse=22;
+              this.list=res.data.msg
+              // this.page=parseFloat(res.data.comment.length/limit)
+               this.pinLun=res.data.comment.slice(page,limit)
+             if(res.data.comment.length>5){
+                  this.page=Math.ceil(res.data.comment.length/limit)
+                  var cont=page!=0 ? page*limit+5:limit
+                  var start=page!=0 ? page*limit:page
+                   this.idex=start
+                   console.log(this.idex,this.page)
+                   if(page>this.page){
+                     alert("已到尽头")
+                      this.getlist()
+                     return
+                   }else{
+                       this.pinLun=res.data.comment.slice(this.idex,cont)
+                       this.pageShow=true;
+                   }
+                 
+             }
+        
+              console.log(res.data)
+              this.$refs.content.innerHTML=this.list.content
+              this.list.browse=22;
               console.log(deleteWz)
            })
+
+        },
+        openText(){
+          const uname=sessionStorage.getItem('username')
+           if(uname!=null){
+                this.show=true;
+           }else{
+              this.$message({
+                message: '警告：只有该帖子持有权限！',
+                type: 'warning'
+              });
+           }
+        },
+        getRef(){
+          const id=this.$route.params.id
+          this.list.id=id
+             updata(this.list).then((res)=>{
+                 console.log(res.data)
+                 console.log(this.list)
+                 this.getlist()
+             })
+                this.show=false;
         }
     }
  }
@@ -195,4 +290,239 @@ import {getdetail,deleteWz} from '@/axios/index'
 <style  scoped lang="css">
  @import '../assets/layui.css';
  @import '../assets/global.css';
+
+
+ 
+.laypage-main .laypage-next:hover{
+   background:#00968 !important;
+}
+.button{
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  padding: 6px 10px;
+  margin: 0;
+  cursor: pointer;
+  border: 1px solid #bbb;
+  overflow: visible;
+  font: bold 13px arial, helvetica, sans-serif;
+  text-decoration: none;
+  white-space: nowrap;
+  color: #555;
+  
+  background-color: #ddd;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,1)), to(rgba(255,255,255,0)));
+  background-image: -webkit-linear-gradient(top, rgba(255,255,255,1), rgba(255,255,255,0));
+  background-image: -moz-linear-gradient(top, rgba(255,255,255,1), rgba(255,255,255,0));
+  background-image: -ms-linear-gradient(top, rgba(255,255,255,1), rgba(255,255,255,0));
+  background-image: -o-linear-gradient(top, rgba(255,255,255,1), rgba(255,255,255,0));
+  background-image: linear-gradient(top, rgba(255,255,255,1), rgba(255,255,255,0));
+  
+  -webkit-transition: background-color .2s ease-out;
+  -moz-transition: background-color .2s ease-out;
+  -ms-transition: background-color .2s ease-out;
+  -o-transition: background-color .2s ease-out;
+  transition: background-color .2s ease-out;
+  background-clip: padding-box; /* Fix bleeding */
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 2px 2px -1px rgba(0, 0, 0, .5), 0 1px 0 rgba(255, 255, 255, .3) inset;
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 2px 2px -1px rgba(0, 0, 0, .5), 0 1px 0 rgba(255, 255, 255, .3) inset;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 2px 2px -1px rgba(0, 0, 0, .5), 0 1px 0 rgba(255, 255, 255, .3) inset;
+  text-shadow: 0 1px 0 rgba(255,255,255, .9);
+  
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.button:hover{
+  background-color: #eee;
+  color: #555;
+}
+
+.button:active{
+  background: #e9e9e9;
+  position: relative;
+  top: 1px;
+  text-shadow: none;
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .3) inset;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .3) inset;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .3) inset;
+}
+
+.button[disabled], .button[disabled]:hover, .button[disabled]:active{
+  border-color: #eaeaea;
+  background: #00968;
+  cursor: default;
+  position: static;
+  color: #999;
+  /* Usually, !important should be avoided but here it's really needed :) */
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Smaller buttons styles */
+
+.button.small{
+  padding: 4px 12px;
+}
+
+/* Larger buttons styles */
+
+.button.large{
+  padding: 10px 22px;
+  text-transform: uppercase;
+}
+
+.button.large:active{
+  top: 2px;
+}
+
+/* Colored buttons styles */
+
+.button.green, .button.red, .button.blue {
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0,.2);
+  
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,.3)), to(rgba(255,255,255,0)));
+  background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+  background-image: -moz-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+  background-image: -ms-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+  background-image: -o-linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+  background-image: linear-gradient(top, rgba(255,255,255,.3), rgba(255,255,255,0));
+}
+
+/* */
+
+.button.green{
+  background-color:#009688;
+  border-color:#009688;
+}
+
+.button.green:hover{
+  background-color: #009688;
+}
+
+.button.green:active{
+  background: #57a957;
+}
+
+/* */
+
+.button.red{
+  background-color: #ca3535;
+  border-color: #c43c35;
+}
+
+.button.red:hover{
+  background-color: #ee5f5b;
+}
+
+.button.red:active{
+  background: #c43c35;
+}
+
+/* */
+
+.button.blue{
+  background-color: #269CE9;
+  border-color: #269CE9;
+}
+
+.button.blue:hover{
+  background-color: #70B9E8;
+}
+
+.button.blue:active{
+  background: #269CE9;
+}
+
+/* */
+
+.green[disabled], .green[disabled]:hover, .green[disabled]:active{
+  border-color: #00968;
+  background: #57A957;
+  color: #D2FFD2;
+}
+
+.red[disabled], .red[disabled]:hover, .red[disabled]:active{
+  border-color: #C43C35;
+  background: #00968;
+  color: #FFD3D3;
+}
+
+.blue[disabled], .blue[disabled]:hover, .blue[disabled]:active{
+  border-color: #269CE9;
+  background: #269CE9;
+  color: #93D5FF;
+}
+
+/* Group buttons */
+
+.button-group,
+.button-group li{
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+}
+
+.button-group{
+  font-size: 0; /* Inline block elements gap - fix */
+  margin: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, .1);
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+  padding: 7px;
+  -moz-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  border-radius: 7px;
+}
+
+.button-group li{
+  margin-right: -1px; /* Overlap each right button border */
+}
+
+.button-group .button{
+  font-size: 13px; /* Set the font size, different from inherited 0 */
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+}
+
+.button-group .button:active{
+  -moz-box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, 5px 0 5px -3px rgba(0, 0, 0, .2) inset, -5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, 5px 0 5px -3px rgba(0, 0, 0, .2) inset, -5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, 5px 0 5px -3px rgba(0, 0, 0, .2) inset, -5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+}
+
+.button-group li:first-child .button{
+  -moz-border-radius: 3px 0 0 3px;
+  -webkit-border-radius: 3px 0 0 3px;
+  border-radius: 3px 0 0 3px;
+}
+
+.button-group li:first-child .button:active{
+  -moz-box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, -5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, -5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, -5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+}
+
+.button-group li:last-child .button{
+  -moz-border-radius: 0 3px 3px 0;
+  -webkit-border-radius: 0 3px 3px 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.button-group li:last-child .button:active{
+  -moz-box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, 5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, 5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .2) inset, 5px 0 5px -3px rgba(0, 0, 0, .2) inset;
+}
 </style>

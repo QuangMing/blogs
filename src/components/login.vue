@@ -10,32 +10,23 @@
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
         <div class="layui-tab-item layui-show">
           <div class="layui-form layui-form-pane">
-            <form method="post">
+            <form >
               <div class="layui-form-item">
-                <label for="L_email" class="layui-form-label">邮箱</label>
+                <label for="L_email" class="layui-form-label">用户</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_email" name="email" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input v-model="list.uname" type="text"     class="layui-input">
                 </div>
               </div>
               <div class="layui-form-item">
-                <label for="L_pass" class="layui-form-label">密码</label>
+                <label   class="layui-form-label">密码</label>
                 <div class="layui-input-inline">
-                  <input type="password" id="L_pass" name="pass" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input v-model="list.upwd" type="password"   class="layui-input">
                 </div>
               </div>
-              <div class="layui-form-item">
-                <label for="L_vercode" class="layui-form-label">人类验证</label>
-                <div class="layui-input-inline">
-                  <input type="text" id="L_vercode" name="vercode" required lay-verify="required" placeholder="请回答后面的问题" autocomplete="off" class="layui-input">
-                </div>
-                <div class="layui-form-mid">
-                  <span style="color: #c00;"></span>
-                </div>
-              </div>
-              <div class="layui-form-item">
-                <button class="layui-btn" lay-filter="*" lay-submit>立即登录</button>
+            
+              <div @click="getlist" class="layui-form-item">
+                <button class="layui-btn"  >立即登录</button>
                 <span style="padding-left:20px;">
-                  <a href="forget.html">忘记密码？</a>
                 </span>
               </div>
               <div class="layui-form-item fly-form-app">
@@ -54,8 +45,40 @@
 </template>
 
 <script>
+    import {login} from '@/axios/index.js'
     export default {
-         name:"Login"
+         name:"Login",
+         mounted() {
+           
+         },
+         created() {
+         },
+         data(){
+           return {
+             list:{}
+           }
+         },
+         methods:{
+           getlist(){
+             console.log(this.list)
+             login(this.list).then((res)=>{
+               if(res.data.code!=200) {
+                 alert("账号或密码错误！请重新登陆");
+                 return 
+               }else{
+                this.list=res.data.msg[0]
+                console.log(res.data)
+                console.log(this.list.username)
+                 sessionStorage['username']=this.list.username
+                 sessionStorage['userIco']=this.list.userIco
+                 sessionStorage['address']=this.list.address
+                 sessionStorage['vip']=this.list.vip
+                 window.location.href='/'
+               }
+              
+             })
+           }
+         }
     } 
 </script>
 

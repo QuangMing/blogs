@@ -14,10 +14,14 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^1.1.0",
     "axios": "^0.18.0",
+    "element-ui": "^2.4.10",
     "qs": "^6.5.2",
+    "tinymce": "^4.8.5",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-tinymce": "^1.0.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

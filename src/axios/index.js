@@ -12,7 +12,20 @@ export  function getdetail(val){
 export  function deleteWz(val){
     return axios.get(`${url}article/del?id=${val}`)
 }
+export  function login(val){
+    return axios.post(`${url}user/login`,qs.stringify(val))
+}
+export  function updata(val){
+    return axios.post(`${url}article/updata`,qs.stringify(val))
+}
 
+export  function addWz(val){
+    return axios.post(`${url}article/add`,qs.stringify(val))
+}
+
+export  function addcomment(val){
+    return axios.post(`${url}comment/add`,qs.stringify(val))
+}
 
 
 

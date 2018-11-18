@@ -17,11 +17,12 @@
     <ul class="layui-nav fly-nav-user">
       
       <!-- 未登入的状态 -->
-      <li class="layui-nav-item">
+      <div v-if='!login'>
+   <li  class="layui-nav-item">
         <a class="iconfont icon-touxiang layui-hide-xs" ></a>
       </li>
       <li class="layui-nav-item">
-        <a >登入</a>
+        <router-link to='/login'>登入</router-link>
       </li>
       
       <li class="layui-nav-item layui-hide-xs">
@@ -29,15 +30,15 @@
       </li>
       <li class="layui-nav-item layui-hide-xs">
         <a   title="微博登入" class="iconfont icon-weibo"></a>
-      </li>
+      </li>   
+      </div>
       
-      <!-- 登入后的状态 -->
-      <!--
-      <li class="layui-nav-item">
+      <!-- 登入后的状态  -->
+      <li v-else class="layui-nav-item">
         <a class="fly-nav-avatar" href="javascript:;">
-          <cite class="layui-hide-xs">贤心</cite>
-          <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
-          <i class="layui-badge fly-badge-vip layui-hide-xs">VIP3</i>
+          <cite class="layui-hide-xs">{{list.uname}}</cite>
+          <i class="iconfont icon-renzheng layui-hide-xs" ></i>
+          <i class="layui-badge fly-badge-vip layui-hide-xs">{{list.vip}}</i>
           <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
         </a>
         <dl class="layui-nav-child">
@@ -48,7 +49,6 @@
           <dd><a href="/user/logout/" style="text-align: center;">退出</a></dd>
         </dl>
       </li>
-      -->
     </ul>
   </div>
 </div>
@@ -71,10 +71,10 @@
     
     <div class="fly-column-right layui-hide-xs"> 
       <span class="fly-search"><i class="layui-icon"></i></span> 
-      <a class="layui-btn">发表新帖</a> 
+      <a  class="layui-btn" @click="addInner">发表新帖</a>
     </div> 
     <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;"> 
-      <a  class="layui-btn">发表新帖</a> 
+  <aclass="layui-btn"></a> 
     </div> 
   </div>
 </div><!--ok-->
@@ -85,8 +85,39 @@
      
 export default{
     name:"Header",
-    
+    mounted() {
+      
+    },
+    created() {
+      this.getLogin();
+    },
+    data(){
+      return {login:false,list:{}}
+    },
+    methods:{
+        addInner(){
+          if(this.login==true){
+            this.$router.push('/add')
+          }else{
+            alert("请先完成登陆")
 
+          }
+        },
+        getLogin(){
+           var uname=sessionStorage.getItem('username')
+           var vip=sessionStorage.getItem('vip')
+           var userIco=sessionStorage.getItem('userIco')
+           this.list['uname']=uname
+           this.list['vip']=vip
+           this.list['userIco']=userIco
+           console.log(this.list)
+           if(uname!=null){
+               this.login=true
+           }else{
+             return 
+           }
+        }
+    }
 }
 </script>
 
