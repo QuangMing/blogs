@@ -4,19 +4,19 @@
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md8 content detail">
       <div class="fly-panel detail-box">
-        <h1>Fly Template v3.0，基于 layui 的极简社区页面模版</h1>
+        <h1></h1>
         <div class="fly-detail-info">
           <!-- <span class="layui-badge">审核中</span> -->
           <span class="layui-badge layui-bg-green fly-detail-column">动态</span>
           
           <span class="layui-badge" style="background-color: #999;">未结</span>
           <!-- <span class="layui-badge" style="background-color: #5FB878;">已结</span> -->
-          
+              
           <span class="layui-badge layui-bg-black">置顶</span>
           <span class="layui-badge layui-bg-red">精帖</span>
           
           <div class="fly-admin-box" data-id="123">
-            <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+            <span @click="delwz" class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
             
             <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span> 
             <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span> -->
@@ -25,8 +25,8 @@
             <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span> -->
           </div>
           <span class="fly-list-nums"> 
-            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> 66</a>
-            <i class="iconfont" title="人气">&#xe60b;</i> 99999
+            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> {{list[0].comment}}</a>
+            <i class="iconfont" title="人气">&#xe60b;</i> <!--{{list[0].browse}}-->
           </span>
         </div>
         <div class="detail-about">
@@ -35,27 +35,23 @@
           </a>
           <div class="fly-detail-user">
             <a  class="fly-link">
-              <cite>贤心</cite>
+              <cite>{{list[0].upuser}}</cite>
             
               <i class="layui-badge fly-badge-vip">VIP3</i>
             </a>
-            <span>2017-11-30</span>
+            <span>{{list[0].data}}</span>
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
-            <span style="padding-right: 10px; color: #FF7200">悬赏：60飞吻</span>  
             <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a >编辑此贴</a></span>
           </div>
         </div>
         <div class="detail-body photos">
           <p>
-            该模版由 layui官方社区（<a href="http://fly.layui.com/" target="_blank">fly.layui.com</a>）倾情提供，只为表明我们对 layui 执着的信念、以及对未来持续加强的承诺。该模版基于 layui 搭建而成，可作为极简通用型社区的页面支撑。
+          
           </p>
           <p>更新日志：</p>
 <pre>
-# v3.0 2017-11-30
-* 采用 layui 2.2.3 作为 UI 支撑
-* 全面同步最新的 Fly 社区风格，各种细节得到大幅优化
-* 更友好的响应式适配能力
+# {{list[0].content}}
 </pre>
           
          
@@ -98,58 +94,10 @@
             <div class="detail-body jieda-body photos">
               <p>香菇那个蓝瘦，这是一条被采纳的回帖</p>
             </div>
-            <div class="jieda-reply">
-              <span class="jieda-zan zanok" type="zan">
-                <i class="iconfont icon-zan"></i>
-                <em>66</em>
-              </span>
-              <span type="reply">
-                <i class="iconfont icon-svgmoban53"></i>
-                回复
-              </span>
-              <div class="jieda-admin">
-                <span type="edit">编辑</span>
-                <span type="del">删除</span>
-                <!-- <span class="jieda-accept" type="accept">采纳</span> -->
-              </div>
-            </div>
+      
           </li>
           
-          <li data-id="111">
-            <a name="item-1111111111"></a>
-            <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" href="">
-                <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" alt=" ">
-              </a>
-              <div class="fly-detail-user">
-                <a href="" class="fly-link">
-                  <cite>贤心</cite>       
-                </a>
-              </div>
-              <div class="detail-hits">
-                <span>2017-11-30</span>
-              </div>
-            </div>
-            <div class="detail-body jieda-body photos">
-              <p>蓝瘦那个香菇，这是一条没被采纳的回帖</p>
-            </div>
-            <div class="jieda-reply">
-              <span class="jieda-zan" type="zan">
-                <i class="iconfont icon-zan"></i>
-                <em>0</em>
-              </span>
-              <span type="reply">
-                <i class="iconfont icon-svgmoban53"></i>
-                回复
-              </span>
-              <div class="jieda-admin">
-                <span type="edit">编辑</span>
-                <span type="del">删除</span>
-                <span class="jieda-accept" type="accept">采纳</span>
-              </div>
-            </div>
-          </li>
-          
+      
           <!-- 无数据时 -->
           <!-- <li class="fly-none">消灭零回复</li> -->
         </ul>
@@ -207,10 +155,41 @@
 
 </template>
 <script>
+import {getdetail,deleteWz} from '@/axios/index'
  export default{
     name:"Detail",
+    mounted() {
+      
+    },
+    data(){
+      return {
+        list:'werwer'
+       
+      }
+    },
+    created() {
+       this.getlist()
+    },
+    methods:{
+        delwz(){
+          const id=this.$route.params.id
+          deleteWz(id).then((res)=>{
+            console.log(res.data)
+             this.getlist()
+            if(res.data.code!=200) return;
+                  
+          })
+        },
+        getlist(){
+         const id=this.$route.params.id
+           getdetail(id).then((res)=>{
+              this.list=res.data
+              this.list[0].browse=22;
+              console.log(deleteWz)
+           })
+        }
+    }
  }
-
 </script>
 
 <style  scoped lang="css">
