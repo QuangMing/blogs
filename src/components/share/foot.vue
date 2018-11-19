@@ -16,7 +16,7 @@ export default{
 </script>
 
 <style scoped lang="css">
- @import '../assets/layui.css';
- @import '../assets/global.css';
+ @import '../../assets/layui.css';
+ @import '../../assets/global.css';
 
 </style>

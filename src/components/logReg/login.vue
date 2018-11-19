@@ -5,7 +5,7 @@
     <div class="layui-tab layui-tab-brief" lay-filter="user">
       <ul class="layui-tab-title">
         <li class="layui-this">登入</li>
-        <li><a href="reg.html">注册</a></li>
+        <li><a  @click="urlGo"  >注册</a></li>
       </ul>
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
         <div class="layui-tab-item layui-show">
@@ -59,6 +59,9 @@
            }
          },
          methods:{
+           urlGo(){
+               this.$router.push('/reg')
+           },
            getlist(){
              console.log(this.list)
              login(this.list).then((res)=>{
@@ -83,6 +86,33 @@
 </script>
 
 <style scoped lang="css">
- @import '../assets/layui.css';
- @import '../assets/global.css';
+ @import '../../assets/layui.css';
+ @import '../../assets/global.css';
+ @import 'element-ui/lib/theme-chalk/index.css';
+ .layui-form-pane .layui-form-label[data-v-10d9df09] {
+   font-size:12px;
+ }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>

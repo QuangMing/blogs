@@ -41,7 +41,7 @@
 
 
 <script>
-import '../assets/layui.js'
+import '../../assets/layui.js'
 import eild from '@/components/eild'
 import {addWz} from '@/axios/index.js'
 export default{
@@ -79,7 +79,7 @@ export default{
 </script>
 
 <style scoped lang="css">
- @import '../assets/layui.css';
- @import '../assets/global.css';
+ @import '../../assets/layui.css';
+ @import '../../assets/global.css';
 
 </style>

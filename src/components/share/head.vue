@@ -39,14 +39,10 @@
           <cite class="layui-hide-xs">{{list.uname}}</cite>
           <i class="iconfont icon-renzheng layui-hide-xs" ></i>
           <i class="layui-badge fly-badge-vip layui-hide-xs">{{list.vip}}</i>
-          <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+          <img :src="list.userIco">
         </a>
-        <dl class="layui-nav-child">
-          <dd><a href="user/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
-          <dd><a href="user/message.html"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
-          <dd><a ><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
-          <hr style="margin: 5px 0;">
-          <dd><a href="/user/logout/" style="text-align: center;">退出</a></dd>
+        <dl style="margin-top:-7px" class="layui-nav-child">
+          <dd  ><a @click="ques"  style="text-align: center;">退出</a></dd>
         </dl>
       </li>
     </ul>
@@ -58,12 +54,7 @@
   <div class="layui-container">
     <ul class="layui-clear">
       <li class="layui-hide-xs layui-this"><a href="/">首页</a></li> 
-      <li><a >提问</a></li> 
-      <li><a >分享<span class="layui-badge-dot"></span></a></li> 
-      <li><a >讨论</a></li> 
-      <li><a >建议</a></li> 
-      <li><a >公告</a></li> 
-      <li><a >动态</a></li> 
+     
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li> 
       <!-- 用户登入后显示 -->
 
@@ -95,6 +86,13 @@ export default{
       return {login:false,list:{}}
     },
     methods:{
+        ques(){
+           var uname=sessionStorage.setItem('username','')
+           var vip=sessionStorage.setItem('vip','')
+           var userIco=sessionStorage.setItem('userIco','')
+           this.getLogin();
+           window.location.href='/'
+        },
         addInner(){
           if(this.login==true){
             this.$router.push('/add')
@@ -111,9 +109,10 @@ export default{
            this.list['vip']=vip
            this.list['userIco']=userIco
            console.log(this.list)
-           if(uname!=null){
+           if(uname!=''){
                this.login=true
            }else{
+             this.login=false
              return 
            }
         }
@@ -122,8 +121,16 @@ export default{
 </script>
 
 <style scoped lang="css">
- @import '../assets/layui.css';
- @import '../assets/global.css';
+ @import '../../assets/layui.css';
+ @import '../../assets/global.css';
+ .layui-nav-item:hover .layui-nav-child{
+     display:block;
+     transition:.5s
+ }
+ .layui-nav-child:hover{
+     display:block;
+     transition:.5s
+ }
  .layui-container{
      font-size:15px;
      padding:8px;

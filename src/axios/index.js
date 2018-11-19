@@ -27,6 +27,14 @@ export  function addcomment(val){
     return axios.post(`${url}comment/add`,qs.stringify(val))
 }
 
+export  function browseone(val){
+    return axios.post(`${url}article/browseone`,qs.stringify(val))
+}
+
+export  function resg(val){
+    return axios.post(`${url}user/regs`,qs.stringify(val))
+}
+
 
 
 

@@ -7,21 +7,18 @@
         <h1></h1>
         <div class="fly-detail-info">
           <!-- <span class="layui-badge">审核中</span> -->
-          <span class="layui-badge layui-bg-green fly-detail-column">动态</span>
+         <!-- <span class="layui-badge layui-bg-green fly-detail-column">动态</span>
           
-          <span class="layui-badge" style="background-color: #999;">未结</span>
+          <span class="layui-badge" style="background-color: #999;">未结</span> -->
           <!-- <span class="layui-badge" style="background-color: #5FB878;">已结</span> -->
-              
-          <span class="layui-badge layui-bg-black">置顶</span>
-          <span class="layui-badge layui-bg-red">精帖</span>
-          
+      
           <div class="fly-admin-box" data-id="123">
-            <span @click="delwz" class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+        
             
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span> 
+          
             <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span> -->
             
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span> 
+             <span  @click="delwz" class="layui-badge layui-bg-red">删除</span>
             <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span> -->
           </div>
           <span class="fly-list-nums"> 
@@ -53,7 +50,7 @@
                 <button style="margin-left:300px;margin-top:8px;" class="layui-btn" @click="getRef" lay-filter="*" lay-submit>立即发布</button>
               </div>
 
-         <div  v-show="!show" ref="content"></div>            
+         <div id="wzneir"  v-show="!show" style="max-width:601px;" ref="content"></div>            
         </div>
       </div>
 
@@ -98,7 +95,7 @@
           
         <div v-show="pageShow"  style="text-align: center">
           <div class="laypage-main">
-          <span @click="getlist(i-1,5)" v-for="i in page" class="laypage-next">{{i}}</span>
+          <span  @click="getlist(i-1,5)" v-for="i in page" class="page laypage-next">{{i}}</span>
         
           <a   @click="getlist(idex+1,5)"  class="laypage-next">下一页</a></div>
           </div>
@@ -130,7 +127,6 @@
           <a href="">基于 layui 的极简社区页面模版</a>
           <span><i class="iconfont icon-pinglun1"></i> 16</span>
         </dd>
-
         <!-- 无数据时 -->
         <!--
         <div class="fly-none">没有相关数据</div>
@@ -160,7 +156,7 @@
 
 </template>
 <script>
-import {getdetail,addcomment,deleteWz,updata} from '@/axios/index'
+import {getdetail,browseone,addcomment,deleteWz,updata} from '@/axios/index'
 import eild from '@/components/eild'
  export default{
     name:"Detail",
@@ -183,26 +179,35 @@ import eild from '@/components/eild'
         pinLun:null,
         pageShow:false,
         page:null,
-        idex:null
-       
-       
+        idex:null,
+        user:null,
+        uname:null
       }
     },
     created() {
        this.getlist()
-   
+       this.browseAdd()
+       
     },
     methods:{
         nextPage(){
 
         },
+        browseAdd(){
+           const id=this.$route.params.id
+           var obj={'id':id}
+            browseone(obj).then((res)=>{
+              console.log(res.data) 
+            })
+        },
         comments(){
           const id=this.$route.params.id
           this.coment.uid=1
           this.coment.id=id
-          if(id==null) {
+          const uname=sessionStorage.getItem('username')
+          if(uname=='') {
             alert("请先登录，再BB");
-            
+            return
           }
            addcomment(this.coment).then((res)=>{
               res.data.code==200 ?  alert("评论成功"):alert("评论失败")
@@ -220,10 +225,11 @@ import eild from '@/components/eild'
       //  console.log(1)
       //  return
           const uname=sessionStorage.getItem('username')
-          if(uname==null) {
+          if(uname!=this.user.username) {
             alert('没有权限')
             return
             }
+
           const id=this.$route.params.id
           deleteWz(id).then((res)=>{
             this.getlist()
@@ -236,14 +242,16 @@ import eild from '@/components/eild'
          const id=this.$route.params.id
            getdetail(id).then((res)=>{
               this.list=res.data.msg
+              this.user=res.data.user
               // this.page=parseFloat(res.data.comment.length/limit)
                this.pinLun=res.data.comment.slice(page,limit)
+           
+               this.uname=res.data.user.username
              if(res.data.comment.length>5){
                   this.page=Math.ceil(res.data.comment.length/limit)
                   var cont=page!=0 ? page*limit+5:limit
                   var start=page!=0 ? page*limit:page
                    this.idex=start
-                   console.log(this.idex,this.page)
                    if(page>this.page){
                      alert("已到尽头")
                       this.getlist()
@@ -251,35 +259,32 @@ import eild from '@/components/eild'
                    }else{
                        this.pinLun=res.data.comment.slice(this.idex,cont)
                        this.pageShow=true;
+                       
                    }
                  
              }
         
-              console.log(res.data)
               this.$refs.content.innerHTML=this.list.content
-              this.list.browse=22;
-              console.log(deleteWz)
+            
            })
 
         },
         openText(){
           const uname=sessionStorage.getItem('username')
-           if(uname!=null){
+           if(uname==this.user.username){
                 this.show=true;
+                return;
            }else{
-              this.$message({
-                message: '警告：只有该帖子持有权限！',
-                type: 'warning'
-              });
+             alert("只有本帖子才具有权限")
+              return;
            }
         },
         getRef(){
           const id=this.$route.params.id
           this.list.id=id
              updata(this.list).then((res)=>{
-                 console.log(res.data)
-                 console.log(this.list)
                  this.getlist()
+                     
              })
                 this.show=false;
         }
@@ -288,13 +293,32 @@ import eild from '@/components/eild'
 </script>
 
 <style  scoped lang="css">
- @import '../assets/layui.css';
- @import '../assets/global.css';
+ @import '../../assets/layui.css';
+ @import '../../assets/global.css';
 
 
- 
-.laypage-main .laypage-next:hover{
-   background:#00968 !important;
+.laypage-main *[data-v-e2d26ecc]:hover{
+    background:#009E94;
+    color:#fff;
+    transition:.5s
+}
+.laypage-main *[data-v-376851e1]:active{
+    
+}
+
+ #wzneir{
+   max-width:600px;
+   max-height:auto;
+   overflow:hidden;
+
+ }
+ #wzneir p img{
+     max-width:600px;
+     max-height:500px;
+   
+ }
+ .page:hover{
+
 }
 .button{
   display: inline-block;
